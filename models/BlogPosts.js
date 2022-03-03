@@ -21,6 +21,9 @@ const BlogPostSchema = new Schema({
     type: String,
     required: true,
   },
+  pfp: {
+    type: String,
+  },
   likes: {
     type: Number,
     default: 0,

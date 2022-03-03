@@ -15,6 +15,14 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  pfp: {
+    type: String,
+    default: "none",
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
   admin: {
     type: Boolean,
     default: false,

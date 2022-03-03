@@ -30,6 +30,7 @@ router.post("/post", fetchuser, async (req, res) => {
       tag: tag,
       user: userid,
       username: userdetails.name,
+      pfp: userdetails.pfp
     });
 
     // console.log(userdetails.name);
