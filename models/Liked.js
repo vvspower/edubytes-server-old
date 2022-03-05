@@ -12,6 +12,9 @@ const LikedSchema = new Schema({
     type: String,
     required: true,
   },
+  pfp: {
+    type: String
+  }
 });
 
 module.exports = mongoose.model("liked", LikedSchema);

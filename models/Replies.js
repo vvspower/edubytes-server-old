@@ -17,7 +17,7 @@ const RepliesSchema = new Schema({
     required: true,
   },
   likes: {
-    type: Number,
+    type: String,
     default: 0,
   },
   name: {
@@ -29,6 +29,9 @@ const RepliesSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  pfp: {
+    type: String
+  }
 });
 
 module.exports = mongoose.model("replies", RepliesSchema);

@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
+const Replies = require("../models/Replies");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
@@ -126,6 +127,16 @@ router.put("/edituser", fetchuser, async (req, res) => {
 
     let userId = req.user.id;
     let user = await User.findById(userId).select("-password");
+
+    let reply = await Replies.findByIdAndUpdate(
+      userId,
+      {
+        $set: {pfp: pfp},
+      },
+      {
+        new: true,
+      }
+    );
 
     let newProfile = {
       pfp: pfp,

@@ -212,6 +212,7 @@ router.post("/reply/", fetchuser, async (req, res) => {
     const user = await User.findById(userId).select("-password");
 
     const replies = new Replies({
+      pfp: user.pfp,
       postid: postid,
       reply: reply,
       user: userId,
@@ -242,14 +243,19 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
 
     let userId = req.user.id;
 
+    const user = await User.findById(userId).select("-password");
+
+    
+
     const newLiked = new Liked({
       commentid: req.params.id,
       likedby: userId,
+      pfp: user.pfp
     });
 
     const savedLiked = await newLiked.save();
 
-    let likedamount = await Liked.find({commentid: req.params.id , likedby: userId})
+    let likedamount = await Liked.find({commentid: req.params.id})
     console.log("/////////")
     console.log(likedamount)
     console.log("/////////")
@@ -257,14 +263,14 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
 
     let newblogpost = await BlogPosts.findById(req.params.id);
     let newlikes = {
-      likes: likedamount.length
+      likes: likedamount
     };
     console.log(newblogpost);
 
     newblogpost = await BlogPosts.findByIdAndUpdate(
       req.params.id,
       {
-        $set: newlikes,
+        $set: {likes: likedamount},
       },
       {
         new: true,
@@ -290,7 +296,7 @@ router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
 
     let newblogpost = await BlogPosts.findById(req.params.id);
     let newlikes = {
-      likes: likedamount.length
+      likes: likedamount
     };
     console.log(newblogpost);
 

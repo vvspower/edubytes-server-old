@@ -25,8 +25,8 @@ const BlogPostSchema = new Schema({
     type: String,
   },
   likes: {
-    type: Number,
-    default: 0,
+    type: Object,
+    default: 0
   },
   date: {
     type: Date,
