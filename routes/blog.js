@@ -17,7 +17,7 @@ const { body, validationResult } = require("express-validator");
 router.post("/post", fetchuser, async (req, res) => {
   try {
     let success = false;
-    const { title, description, tag } = req.body;
+    const { title, description, tag , image } = req.body;
     let userid = req.user.id;
 
     console.log(title, description, tag, userid);
@@ -30,7 +30,8 @@ router.post("/post", fetchuser, async (req, res) => {
       tag: tag,
       user: userid,
       username: userdetails.name,
-      pfp: userdetails.pfp
+      pfp: userdetails.pfp,
+      image: image,
     });
 
     // console.log(userdetails.name);

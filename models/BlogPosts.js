@@ -10,6 +10,10 @@ const BlogPostSchema = new Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    default: "none"
+  },
   tag: {
     type: String,
     required: true,
