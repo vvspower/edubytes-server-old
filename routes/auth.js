@@ -178,4 +178,29 @@ router.get("/getusernoauth/:id", async (req, res) => {
   }
 });
 
+router.get("/getUserId", fetchuser, async (req, res) => {
+  try {
+    let userId = req.user.id
+    res.json(userId);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/fetchallusers/", async (req, res) => {
+  try {
+    const user = await User.find().select("-password").select("-email").limit(10)
+    console.log(user);
+
+    res.send(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+
+
 module.exports = router;

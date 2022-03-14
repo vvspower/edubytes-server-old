@@ -17,7 +17,7 @@ const UserSchema = new Schema({
   },
   pfp: {
     type: String,
-    default: "none",
+    default: "https://res.cloudinary.com/disle0uxb/image/upload/v1647259610/user_nlokii.jpg",
   },
   bio: {
     type: String,

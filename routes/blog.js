@@ -292,13 +292,15 @@ router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
     let userId = req.user.id;
     let liked = await Liked.findOneAndDelete({commentid: req.params.id , likedby: userId})
 
-
-    let likedamount = await Liked.find({commentid: req.params.id , likedby: userId})
+    let likedamount = await Liked.find({commentid: req.params.id})
 
     let newblogpost = await BlogPosts.findById(req.params.id);
     let newlikes = {
       likes: likedamount
     };
+    console.log("!!!!!!!!!!!")
+    console.log(newlikes)
+    console.log("!!!!!!!!!!!")
     console.log(newblogpost);
 
     newblogpost = await BlogPosts.findByIdAndUpdate(

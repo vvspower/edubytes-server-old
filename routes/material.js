@@ -140,9 +140,12 @@ router.delete("/deleteresource/:id", fetchuser, async (req, res) => {
   }
 });
 
-router.get("/fetchuserresources", fetchuser, async (req, res) => {
+router.get("/fetchuserresources/:id", async (req, res) => {
   try {
-    const resources = await Resource.find({ user: req.user.id });
+    const resources = await Resource.find({ user: req.params.id });
+    console.log("///")
+
+    console.log(resources)
     res.json(resources);
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -164,6 +167,15 @@ router.get("/fetchapprovalresource", async (req, res) => {
       globalid: "resource",
     });
     res.json(resource);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/getUserId", fetchuser, async (req, res) => {
+  try {
+    let userId = req.user.id
+    res.json(userId);
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
