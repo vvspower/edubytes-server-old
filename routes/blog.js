@@ -17,7 +17,7 @@ const { body, validationResult } = require("express-validator");
 router.post("/post", fetchuser, async (req, res) => {
   try {
     let success = false;
-    const { title, description, tag , image } = req.body;
+    const { title, description, tag, image } = req.body;
     let userid = req.user.id;
 
     console.log(title, description, tag, userid);
@@ -184,7 +184,20 @@ router.get("/fetchuserapprovalblog", fetchuser, async (req, res) => {
 
 router.get("/fetchallblogposts", async (req, res) => {
   try {
-    const blogposts = await BlogPosts.find({ globalid: "blogposts" });
+    const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(3);
+    console.log(blogposts);
+
+    res.json(blogposts);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/loadmoreblogposts/:num", async (req, res) => {
+  try {
+    const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(
+      req.params.num + 5
+    );
     console.log(blogposts);
 
     res.json(blogposts);
@@ -244,34 +257,41 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
 
     let userId = req.user.id;
 
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select("-password")
 
-    
+    const userupdate = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: { likes: user.likes + 1 },
+      },
+      {
+        new: true,
+      }
+    ).select("-password");
 
     const newLiked = new Liked({
       commentid: req.params.id,
       likedby: userId,
-      pfp: user.pfp
+      pfp: user.pfp,
     });
 
     const savedLiked = await newLiked.save();
 
-    let likedamount = await Liked.find({commentid: req.params.id})
-    console.log("/////////")
-    console.log(likedamount)
-    console.log("/////////")
-
+    let likedamount = await Liked.find({ commentid: req.params.id });
+    console.log("/////////");
+    console.log(likedamount);
+    console.log("/////////");
 
     let newblogpost = await BlogPosts.findById(req.params.id);
     let newlikes = {
-      likes: likedamount
+      likes: likedamount,
     };
     console.log(newblogpost);
 
     newblogpost = await BlogPosts.findByIdAndUpdate(
       req.params.id,
       {
-        $set: {likes: likedamount},
+        $set: { likes: likedamount },
       },
       {
         new: true,
@@ -281,7 +301,6 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
 
     res.json({ status: "done" });
     console.log(newLiked);
-
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -290,17 +309,32 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
 router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
   try {
     let userId = req.user.id;
-    let liked = await Liked.findOneAndDelete({commentid: req.params.id , likedby: userId})
+    let liked = await Liked.findOneAndDelete({
+      commentid: req.params.id,
+      likedby: userId,
+    });
 
-    let likedamount = await Liked.find({commentid: req.params.id})
+    const user = await User.findById(userId).select("-password")
+
+    const userupdate = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: { likes: user.likes - 1 },
+      },
+      {
+        new: true,
+      }
+    ).select("-password");
+
+    let likedamount = await Liked.find({ commentid: req.params.id });
 
     let newblogpost = await BlogPosts.findById(req.params.id);
     let newlikes = {
-      likes: likedamount
+      likes: likedamount,
     };
-    console.log("!!!!!!!!!!!")
-    console.log(newlikes)
-    console.log("!!!!!!!!!!!")
+    console.log("!!!!!!!!!!!");
+    console.log(newlikes);
+    console.log("!!!!!!!!!!!");
     console.log(newblogpost);
 
     newblogpost = await BlogPosts.findByIdAndUpdate(
@@ -312,7 +346,7 @@ router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
         new: true,
       }
     );
-    res.json({status: "done"})
+    res.json({ status: "done" });
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -321,24 +355,19 @@ router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
 router.get("/fetchliked/:id", fetchuser, async (req, res) => {
   try {
     let userId = req.user.id;
-    let liked = await Liked.findOne({commentid: req.params.id , likedby: userId})
-    if(liked) {
-      res.json({liked: true})
+    let liked = await Liked.findOne({
+      commentid: req.params.id,
+      likedby: userId,
+    });
+    if (liked) {
+      res.json({ liked: true });
     } else {
-      res.json({liked: false})
-
+      res.json({ liked: false });
     }
-  
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
-
-
-
-
 
 module.exports = router;
 

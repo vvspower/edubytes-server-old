@@ -172,14 +172,7 @@ router.get("/fetchapprovalresource", async (req, res) => {
   }
 });
 
-router.get("/getUserId", fetchuser, async (req, res) => {
-  try {
-    let userId = req.user.id
-    res.json(userId);
-  } catch (error) {
-    res.status(500).send("Internal Server Error");
-  }
-});
+
 
 router.get("/fetchuserapprovalresources", fetchuser, async (req, res) => {
   try {
