@@ -184,7 +184,7 @@ router.get("/fetchuserapprovalblog", fetchuser, async (req, res) => {
 
 router.get("/fetchallblogposts", async (req, res) => {
   try {
-    const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(3);
+    const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(20);
     console.log(blogposts);
 
     res.json(blogposts);

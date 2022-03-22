@@ -18,6 +18,7 @@ router.post(
     body("password").isLength({ min: 5 }),
   ],
   async (req, res) => {
+    console.log(req.body.email)
     let success = false;
 
     // if there are errors , return Bad requests and the errors
