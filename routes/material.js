@@ -23,10 +23,10 @@ router.post(
       }
 
       const { name, type, subject, link } = req.body;
-      console.log(name , type , subject  , link)
+      
       userid = req.user.id;
 
-      console.log(userid)
+      
 
       const resource = new Resource({
         name: name,
@@ -49,7 +49,7 @@ router.post(
 router.post("/approveResource/:id", async (req, res) => {
   try {
     const approve = await ApproveResource.findById(req.params.id);
-    console.log(approve);
+    
 
     if (!approve) {
       res.status(404).send("Not Found");
@@ -112,7 +112,7 @@ router.put("/updateresource/:id", fetchuser, async (req, res) => {
 
     res.json({ resource });
   } catch (error) {
-    console.log(error);
+    
 
     res.status(500).send("Internal Server Error");
   }
@@ -143,9 +143,9 @@ router.delete("/deleteresource/:id", fetchuser, async (req, res) => {
 router.get("/fetchuserresources/:id", async (req, res) => {
   try {
     const resources = await Resource.find({ user: req.params.id });
-    console.log("///")
+    
 
-    console.log(resources)
+    
     res.json(resources);
   } catch (error) {
     res.status(500).send("Internal Server Error");

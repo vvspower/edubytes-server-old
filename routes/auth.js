@@ -18,7 +18,7 @@ router.post(
     body("password").isLength({ min: 5 }),
   ],
   async (req, res) => {
-    console.log(req.body.email)
+    
     let success = false;
 
     // if there are errors , return Bad requests and the errors
@@ -121,9 +121,7 @@ router.post("/getuser", fetchuser, async (req, res) => {
 router.put("/edituser", fetchuser, async (req, res) => {
   try {
     const { pfp, bio } = req.body;
-    console.log("/////////")
-    console.log(pfp)
-    console.log("/////////")
+    
 
 
     let userId = req.user.id;
@@ -155,7 +153,7 @@ router.put("/edituser", fetchuser, async (req, res) => {
       }
     );
 
-    console.log(user)
+    
 
     res.send({user})
     
@@ -170,7 +168,7 @@ router.put("/edituser", fetchuser, async (req, res) => {
 router.get("/getusernoauth/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
-    console.log(user);
+    
 
     res.send(user);
   } catch (error) {
@@ -191,7 +189,7 @@ router.get("/getUserId", fetchuser, async (req, res) => {
 router.get("/fetchallusers/", async (req, res) => {
   try {
     const user = await User.find().select("-password").select("-email").limit(10)
-    console.log(user);
+    
 
     res.send(user);
   } catch (error) {

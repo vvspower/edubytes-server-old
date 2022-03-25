@@ -16,5 +16,5 @@ app.use("/api/app", require("./routes/material"));
 app.use("/api/app", require("./routes/ads"));
 
 app.listen(process.env.PORT || 5000, () => {
-  console.log(`Project1400 backend listening`);
+  console.log("Listening to MongoDB")
 });

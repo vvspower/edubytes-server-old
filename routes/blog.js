@@ -20,8 +20,6 @@ router.post("/post", fetchuser, async (req, res) => {
     const { title, description, tag, image } = req.body;
     let userid = req.user.id;
 
-    console.log(title, description, tag, userid);
-
     const userdetails = await User.findById(userid).select("-password");
 
     const newblogpost = new BlogPosts({
@@ -34,7 +32,7 @@ router.post("/post", fetchuser, async (req, res) => {
       image: image,
     });
 
-    // console.log(userdetails.name);
+    //
 
     const savedblogpost = await newblogpost.save();
     success = true;
@@ -47,7 +45,6 @@ router.post("/post", fetchuser, async (req, res) => {
 router.post("/approveBlog/:id", async (req, res) => {
   try {
     const approve = await ApprovalBlogPosts.findById(req.params.id);
-    console.log(approve);
 
     if (!approve) {
       res.status(404).send("Not Found");
@@ -65,6 +62,8 @@ router.post("/approveBlog/:id", async (req, res) => {
       username: approve.username,
     });
 
+    // 
+
     const deleteapprove = await ApprovalBlogPosts.findByIdAndDelete(
       req.params.id
     );
@@ -77,23 +76,30 @@ router.post("/approveBlog/:id", async (req, res) => {
 });
 
 router.put("/updateblog/:id", fetchuser, async (req, res) => {
-  const { title, description, tag } = req.body;
+  const { title, description, tag , image } = req.body;
+  console.log(title, description, tag , image , req.params.id)
+  let success = false
   try {
+    //  title: title,
+    
+    
+    let newblogpost = await BlogPosts.findById(req.params.id);
+    if (!newblogpost) {
+      res.status(404).send("Not Found");
+    }
+    
+    if (newblogpost.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
+    
     const newpost = {
       title: title,
       description: description,
       tag: tag,
       user: req.user.id,
+      image: image,
     };
 
-    let newblogpost = await BlogPosts.findById(req.params.id);
-    if (!newblogpost) {
-      res.status(404).send("Not Found");
-    }
-
-    if (newblogpost.user.toString() !== req.user.id) {
-      return res.status(401).send("Not Allowed");
-    }
 
     newblogpost = await BlogPosts.findByIdAndUpdate(
       req.params.id,
@@ -101,14 +107,15 @@ router.put("/updateblog/:id", fetchuser, async (req, res) => {
         $set: newpost,
       },
       {
-        new: true,
+       upsert: true
       }
     );
 
-    res.json({ newblogpost });
-  } catch (error) {
-    console.log(error);
+    console.log(newblogpost)
+    let success = true
 
+    res.json({ success,  newblogpost });
+  } catch (error) {
     res.status(500).send("Internal Server Error");
   }
 });
@@ -133,6 +140,8 @@ router.delete("/deleteBlog/:id", fetchuser, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+
 
 router.delete("/deleteNoAuthBlog/:id", async (req, res) => {
   try {
@@ -185,7 +194,6 @@ router.get("/fetchuserapprovalblog", fetchuser, async (req, res) => {
 router.get("/fetchallblogposts", async (req, res) => {
   try {
     const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(20);
-    console.log(blogposts);
 
     res.json(blogposts);
   } catch (error) {
@@ -198,7 +206,6 @@ router.get("/loadmoreblogposts/:num", async (req, res) => {
     const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(
       req.params.num + 5
     );
-    console.log(blogposts);
 
     res.json(blogposts);
   } catch (error) {
@@ -209,7 +216,7 @@ router.get("/loadmoreblogposts/:num", async (req, res) => {
 router.get("/fetchblog/:id", async (req, res) => {
   try {
     let blogposts = await BlogPosts.findById(req.params.id);
-    console.log(blogposts);
+
     res.json(blogposts);
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -243,7 +250,6 @@ router.post("/reply/", fetchuser, async (req, res) => {
 router.get("/fetchreplies/:id", async (req, res) => {
   try {
     const replies = await Replies.find({ postid: req.params.id });
-    console.log(replies);
 
     res.json(replies);
   } catch (error) {
@@ -257,7 +263,7 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
 
     let userId = req.user.id;
 
-    const user = await User.findById(userId).select("-password")
+    const user = await User.findById(userId).select("-password");
 
     const userupdate = await User.findByIdAndUpdate(
       userId,
@@ -278,15 +284,11 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
     const savedLiked = await newLiked.save();
 
     let likedamount = await Liked.find({ commentid: req.params.id });
-    console.log("/////////");
-    console.log(likedamount);
-    console.log("/////////");
 
     let newblogpost = await BlogPosts.findById(req.params.id);
     let newlikes = {
       likes: likedamount,
     };
-    console.log(newblogpost);
 
     newblogpost = await BlogPosts.findByIdAndUpdate(
       req.params.id,
@@ -297,10 +299,8 @@ router.post("/likepost/:id", fetchuser, async (req, res) => {
         new: true,
       }
     );
-    console.log(newblogpost);
 
     res.json({ status: "done" });
-    console.log(newLiked);
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -314,7 +314,7 @@ router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
       likedby: userId,
     });
 
-    const user = await User.findById(userId).select("-password")
+    const user = await User.findById(userId).select("-password");
 
     const userupdate = await User.findByIdAndUpdate(
       userId,
@@ -332,10 +332,6 @@ router.delete("/unlikepost/:id", fetchuser, async (req, res) => {
     let newlikes = {
       likes: likedamount,
     };
-    console.log("!!!!!!!!!!!");
-    console.log(newlikes);
-    console.log("!!!!!!!!!!!");
-    console.log(newblogpost);
 
     newblogpost = await BlogPosts.findByIdAndUpdate(
       req.params.id,
@@ -377,7 +373,7 @@ module.exports = router;
 //     const { title, description, tag } = req.body;
 //     let userid = req.user.id;
 
-//     console.log(title, description, tag, userid);
+//
 
 //     const userdetails = await User.findById(userid).select("-password");
 
@@ -389,7 +385,7 @@ module.exports = router;
 //       username: userdetails.name,
 //     });
 
-//     // console.log(userdetails.name);
+//     //
 
 //     const savedblogpost = await newblogpost.save();
 //     success = true;

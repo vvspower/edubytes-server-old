@@ -23,7 +23,7 @@ const BlogPostSchema = new Schema({
   },
   username: {
     type: String,
-    required: true,
+   
   },
   pfp: {
     type: String,

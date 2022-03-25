@@ -9,11 +9,8 @@ router.post(
   "/postAd",
   [
     body("name", "title cannot be blank").exists(),
-    body("description", "description cannot be blank").exists(),
-    body("level", " Please select appropriate level").exists(),
     body("subject", "Please select appropriate Subject").exists(),
-    body("email", "Please include appropriate email").exists(),
-    body("whatsapp", "Please include appropriate contact number").exists(),
+    body("contact", "Please include appropriate contact number").exists(),
   ],
   fetchuser,
   async (req, res) => {
@@ -23,20 +20,22 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { name, description, level, subject, email, whatsapp, price } =
-        req.body;
-      userid = req.user.id;
-
-      const newapproval = new ApprovalAdvertisement({
+      const { name,subject, institution , contact, price  , image} = req.body;
+      let userId = req.user.id;
+      
+     
+ 
+      const newapproval = new Advertisement({
         name: name,
-        description: description,
-        level: level,
         subject: subject,
-        email: email,
-        whatsapp: whatsapp,
-        user: userid,
+        institution: institution,
+        contact: contact,
+        user: userId,
         price: price,
+        image: image,
       });
+
+   
 
       const savedad = await newapproval.save();
       success = true;
@@ -50,7 +49,7 @@ router.post(
 router.post("/approveAd/:id", async (req, res) => {
   try {
     const approve = await ApprovalAdvertisement.findById(req.params.id);
-    console.log(approve);
+ 
 
     if (!approve) {
       res.status(404).send("Not Found");
@@ -83,7 +82,7 @@ router.post("/approveAd/:id", async (req, res) => {
 });
 
 router.put("/updateAd/:id", fetchuser, async (req, res) => {
-  const { name, description, level, subject, email, whatsapp, price } =
+  const { name, description, level, subject, email, contact, price } =
     req.body;
   try {
     const newAd = {
@@ -92,7 +91,7 @@ router.put("/updateAd/:id", fetchuser, async (req, res) => {
       level: level,
       subject: subject,
       email: email,
-      whatsapp: whatsapp,
+      contact: contact,
       price: price,
     };
 
@@ -117,8 +116,6 @@ router.put("/updateAd/:id", fetchuser, async (req, res) => {
 
     res.json({ advertisement });
   } catch (error) {
-    console.log(error);
-
     res.status(500).send("Internal Server Error");
   }
 });
@@ -158,6 +155,7 @@ router.get("/fetchallads", async (req, res) => {
     const advertisement = await Advertisement.find({
       globalid: "advertisement",
     });
+    console.log(advertisement)
     res.json(advertisement);
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -180,6 +178,7 @@ router.get("/fetchuserapprovalads", fetchuser, async (req, res) => {
     const advertisement = await ApprovalAdvertisement.find({
       user: req.user.id,
     });
+    console.log(advertisement)
     res.json(advertisement);
   } catch (error) {
     res.status(500).send("Internal Server Error");

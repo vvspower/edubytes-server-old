@@ -6,23 +6,15 @@ const AdvertisementSchema = new Schema({
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    required: true,
-  },
-  level: {
-    type: String,
-    required: true,
-  },
   subject: {
     type: String,
     required: true,
   },
-  whatsapp: {
+  institution: {
     type: String,
-    required: true,
+    required: true
   },
-  email: {
+  contact: {
     type: String,
     required: true,
   },
@@ -39,8 +31,11 @@ const AdvertisementSchema = new Schema({
   },
   price: {
     type: String,
-    required: true,
   },
+  image: {
+    type: String,
+    required: true
+  }
 });
 
 module.exports = mongoose.model("advertisement", AdvertisementSchema);
