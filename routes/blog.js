@@ -154,7 +154,7 @@ router.delete("/deleteNoAuthBlog/:id", async (req, res) => {
     res.json({
       success: "Your Blog has successfully been deleted",
       blogposts: blogposts,
-    });
+    })
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -193,7 +193,7 @@ router.get("/fetchuserapprovalblog", fetchuser, async (req, res) => {
 
 router.get("/fetchallblogposts", async (req, res) => {
   try {
-    const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(20);
+    const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(15);
 
     res.json(blogposts);
   } catch (error) {
@@ -203,11 +203,24 @@ router.get("/fetchallblogposts", async (req, res) => {
 
 router.get("/loadmoreblogposts/:num", async (req, res) => {
   try {
+    let morePosts;
     const blogposts = await BlogPosts.find({ globalid: "blogposts" }).limit(
-      req.params.num + 5
+      req.params.num + 10
     );
+    console.log(blogposts.length , req.params.num )
 
-    res.json(blogposts);
+    if(blogposts.length == req.params.num) {
+      morePosts = false
+    } else {
+      morePosts = true
+    }
+
+    console.log(morePosts)
+ 
+    
+    // console.log(blogposts)
+
+    res.json({blogposts , morePosts});
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
