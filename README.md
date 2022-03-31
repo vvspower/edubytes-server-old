@@ -82,7 +82,10 @@ Base URL for Other is `{API_URL}/api/app`
 
 
 ### DEMO
-_View the demo in the client [repository](https://github.com/MustafaAP/edubytes-client)
+_View the demo in the client [repository](https://github.com/MustafaAP/edubytes-client)_
+
+
+_Made with ❤️_
 
 
 
