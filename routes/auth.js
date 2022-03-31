@@ -18,7 +18,6 @@ router.post(
     body("password").isLength({ min: 5 }),
   ],
   async (req, res) => {
-    
     let success = false;
 
     // if there are errors , return Bad requests and the errors
@@ -33,7 +32,7 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ success, error: "Sorry a user with email already exists" });
+          .json({ success, errors: "Sorry a user with email already exists" });
       }
       const salt = await bcrypt.genSalt(10);
       secPass = await bcrypt.hash(req.body.password, salt);
@@ -51,6 +50,7 @@ router.post(
       };
       const authToken = jwt.sign(data, JWT_SECRET);
       success = true;
+      
 
       res.json({ success, authToken });
     } catch (error) {
@@ -68,40 +68,50 @@ router.post(
     body("password", "Password cannot be blank").exists(),
   ],
   async (req, res) => {
-    let success = false;
+    try {
+    let success = true;
     // if there are errors , return Bad requests and the errors
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array()[0].msg });
-    }
-    const { email, password } = req.body;
-    try {
-      let user = await User.findOne({ email });
-      if (!user) {
-        success = false;
-        return res
-          .status(400)
-          .json({ success, error: "Please use correct credentials" });
-      }
+      try {
+        if (!errors.isEmpty()) {
+          success = false;
+          return res.status(400).json({ error: errors.array()[0].msg });
+        }
 
-      const passwordCompare = await bcrypt.compare(password, user.password);
-      if (!passwordCompare) {
-        success = false;
-        return res
-          .status(400)
-          .json({ success, error: "Please use correct credentials" });
+        const { email, password } = req.body;
+        let user = await User.findOne({ email });
+
+        if (!user) {
+          success = false;
+          return res
+            .status(400)
+            .json({ success, error: "Please use correct credentials" });
+        }
+
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if (!passwordCompare) {
+          success = false;
+          return res
+            .status(400)
+            .json({ success, error: "Please use correct credentials" });
+        }
+
+        const data = {
+          user: {
+            id: user.id,
+          },
+        };
+
+        const authToken = jwt.sign(data, JWT_SECRET);
+        res.json({ success, authToken });
+      } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");  // removing this also results in same error
+      
       }
-      const data = {
-        user: {
-          id: user.id,
-        },
-      };
-      const authToken = jwt.sign(data, JWT_SECRET);
-      success = true;
-      res.json({ success, authToken });
     } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Internal Server Error");
+      console.error(error);
+     
     }
   }
 );
@@ -121,8 +131,6 @@ router.post("/getuser", fetchuser, async (req, res) => {
 router.put("/edituser", fetchuser, async (req, res) => {
   try {
     const { pfp, bio } = req.body;
-    
-
 
     let userId = req.user.id;
     let user = await User.findById(userId).select("-password");
@@ -130,7 +138,7 @@ router.put("/edituser", fetchuser, async (req, res) => {
     let reply = await Replies.findByIdAndUpdate(
       userId,
       {
-        $set: {pfp: pfp},
+        $set: { pfp: pfp },
       },
       {
         new: true,
@@ -139,9 +147,8 @@ router.put("/edituser", fetchuser, async (req, res) => {
 
     let newProfile = {
       pfp: pfp,
-      bio: bio
+      bio: bio,
     };
-   
 
     user = await User.findByIdAndUpdate(
       userId,
@@ -153,22 +160,16 @@ router.put("/edituser", fetchuser, async (req, res) => {
       }
     );
 
-    
-
-    res.send({user})
-    
+    res.send({ user });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
 });
 
-
-
 router.get("/getusernoauth/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
-    
 
     res.send(user);
   } catch (error) {
@@ -179,7 +180,7 @@ router.get("/getusernoauth/:id", async (req, res) => {
 
 router.get("/getUserId", fetchuser, async (req, res) => {
   try {
-    let userId = req.user.id
+    let userId = req.user.id;
     res.json(userId);
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -188,8 +189,10 @@ router.get("/getUserId", fetchuser, async (req, res) => {
 
 router.get("/fetchallusers/", async (req, res) => {
   try {
-    const user = await User.find().select("-password").select("-email").limit(10)
-    
+    const user = await User.find()
+      .select("-password")
+      .select("-email")
+      .limit(10);
 
     res.send(user);
   } catch (error) {
@@ -197,9 +200,5 @@ router.get("/fetchallusers/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
-
-
 
 module.exports = router;

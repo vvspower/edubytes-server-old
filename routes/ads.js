@@ -141,9 +141,9 @@ router.delete("/deleteAd/:id", fetchuser, async (req, res) => {
   }
 });
 
-router.get("/fetchuserads", fetchuser, async (req, res) => {
+router.get("/fetchuserads/:id", async (req, res) => {
   try {
-    const advertisement = await Advertisement.find({ user: req.user.id });
+    const advertisement = await Advertisement.find({ user: req.params.id });
     res.json(advertisement);
   } catch (error) {
     res.status(500).send("Internal Server Error");
