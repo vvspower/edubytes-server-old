@@ -14,7 +14,7 @@ const { body, validationResult } = require("express-validator");
 //     "tag": "gello"
 // }
 
-router.post("/post", fetchuser, async (req, res) => {
+router.post("/blog", fetchuser, async (req, res) => {
   try {
     let success = false;
     const { title, description, tag, image } = req.body;
@@ -42,40 +42,8 @@ router.post("/post", fetchuser, async (req, res) => {
   }
 });
 
-router.post("/approveBlog/:id", async (req, res) => {
-  try {
-    const approve = await ApprovalBlogPosts.findById(req.params.id);
 
-    if (!approve) {
-      res.status(404).send("Not Found");
-    }
-
-    // if (advertisement.user.toString() !== req.user.id) {
-    //   return res.status(401).send("Not Allowed");
-    // }
-
-    const newblog = new BlogPosts({
-      title: approve.title,
-      description: approve.description,
-      tag: approve.tag,
-      user: approve.user,
-      username: approve.username,
-    });
-
-    // 
-
-    const deleteapprove = await ApprovalBlogPosts.findByIdAndDelete(
-      req.params.id
-    );
-
-    const saveblog = await newblog.save();
-    res.json({ saveblog });
-  } catch (error) {
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-router.put("/updateblog/:id", fetchuser, async (req, res) => {
+router.put("/blog/:id", fetchuser, async (req, res) => {
   const { title, description, tag , image } = req.body;
   console.log(title, description, tag , image , req.params.id)
   let success = false
@@ -120,7 +88,7 @@ router.put("/updateblog/:id", fetchuser, async (req, res) => {
   }
 });
 
-router.delete("/deleteBlog/:id", fetchuser, async (req, res) => {
+router.delete("/blog/:id", fetchuser, async (req, res) => {
   try {
     let blogposts = await BlogPosts.findById(req.params.id);
     if (!blogposts) {
@@ -143,22 +111,22 @@ router.delete("/deleteBlog/:id", fetchuser, async (req, res) => {
 
 
 
-router.delete("/deleteNoAuthBlog/:id", async (req, res) => {
-  try {
-    let blogposts = await BlogPosts.findById(req.params.id);
-    if (!blogposts) {
-      res.status(404).send("Not Found");
-    }
+// router.delete("/deleteNoAuthBlog/:id", async (req, res) => {
+//   try {
+//     let blogposts = await BlogPosts.findById(req.params.id);
+//     if (!blogposts) {
+//       res.status(404).send("Not Found");
+//     }
 
-    blogposts = await BlogPosts.findByIdAndDelete(req.params.id);
-    res.json({
-      success: "Your Blog has successfully been deleted",
-      blogposts: blogposts,
-    })
-  } catch (error) {
-    res.status(500).send("Internal Server Error");
-  }
-});
+//     blogposts = await BlogPosts.findByIdAndDelete(req.params.id);
+//     res.json({
+//       success: "Your Blog has successfully been deleted",
+//       blogposts: blogposts,
+//     })
+//   } catch (error) {
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 router.get("/fetchuserblogs/:id", async (req, res) => {
   try {
