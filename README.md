@@ -35,6 +35,8 @@ npm install
 ## API End Points
 Listed down are all the important endpoints of this app
 
+Currently the hosted API is https://edubytes-server.herokuapp.com/
+
 The API is currently hosted on (website). If you want to test the API's by yourself , the easiest way would be to use the ThunderClient extension in VsCode
 
 - Install ThunderClient Extension in VSCode
