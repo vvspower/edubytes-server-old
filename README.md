@@ -61,8 +61,31 @@ Base URL for Other is `{API_URL}/api/app`
 - `PUT /blog/:id`
 - `DELETE /blog/:id`
 - `GET /loadblog/:num`
-- `POST /reply/
-- -POST /replies/:id
+- `POST /reply/`
+- `POST /replies/:id`
+
+## Resources
+
+- `POST /resource`
+- `GET /resource/:id`
+- `DELETE /resource/:id`
+- `PUT /resource/:id`
+- `GET /resource`
+
+## Ads
+
+- `POST /ads`
+- `PUT /ads/:id`
+- `DELETE /ads/:id`
+- `GET /ads/:id`
+- `GET /allads/`
+
+
+### DEMO
+_View the demo in the client [repository](https://github.com/MustafaAP/edubytes-client)
+
+
+
 
 
 
