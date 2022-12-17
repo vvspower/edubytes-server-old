@@ -1,12 +1,5 @@
 # Edubytes back-end
 
-## Please do not claim this project as yours. I have not added a license which means
-- you have no permission from the creators of this software to  modify, or share the software. Although a code host such as GitHub may allow you to view and fork the code, this does not imply that you are permitted to modify, or share the software for any purpose
-
-
-
-
-
 Server for the EduBytes project. This app is supposed to run in conjunction with the front-end. 
 
 # Guide to setup
